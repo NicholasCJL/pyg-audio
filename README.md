@@ -18,7 +18,7 @@ r_f = 1  # relative amplitude of sine wave
 
 audio = Audio(sample_rate=sample_rate, relative_amp=rel_amp)
 audio.construct_time(seconds=seconds)
-audio.create_amp(wave_func=Audio.sin, frequency=f, amplitude=r_f)
+audio.create_wave(wave_func=Audio.sin, frequency=f, amplitude=r_f)
 
 audio.play_sound(vol_func=Audio.constant_volume)
 ```
@@ -38,7 +38,7 @@ r_fs = [1, 0.5]  # relative amplitudes of sine waves
 audio = Audio(sample_rate=sample_rate, relative_amp=rel_amp)
 audio.construct_time(seconds=seconds)
 for f, r_f in zip(fs, r_fs):
-    audio.create_amp(wave_func=Audio.sin, frequency=f, amplitude=r_f)
+    audio.create_wave(wave_func=Audio.sin, frequency=f, amplitude=r_f)
 
 audio.play_sound(vol_func=Audio.constant_volume)
 ```
@@ -57,7 +57,7 @@ r_fs = [1, 0.5]  # relative amplitudes of sine waves
 audio = Audio(sample_rate=sample_rate, relative_amp=rel_amp)
 audio.construct_time(seconds=seconds)
 for f, r_f in zip(fs, r_fs):
-    audio.create_amp(wave_func=Audio.sin, frequency=f, amplitude=r_f)
+    audio.create_wave(wave_func=Audio.sin, frequency=f, amplitude=r_f)
 
 audio.play_sound(vol_func=Audio.linear_volume)
 ```
