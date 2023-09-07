@@ -46,9 +46,9 @@ class Audio:
                     frequency: float,
                     amplitude: float) -> None:
         if self.collected_amp is None:
-            raise NotImplementedError("Construct time first with"
-                                      "`construct_time` before creating"
-                                      "waves.")
+            raise UnboundLocalError("Construct time first with"
+                                    "`construct_time` before creating"
+                                    "waves.")
 
         self.collected_amp += wave_func(self.t, frequency, amplitude)
 
