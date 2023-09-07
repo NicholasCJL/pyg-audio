@@ -7,14 +7,27 @@ import pygame
 class Audio:
     max_amp = 32767
 
+    """
+    Volume modulation methods.
+    """
+    @staticmethod
+    def constant_volume(t: np.ndarray) -> np.ndarray:
+        return np.ones_like(t)
+
     @staticmethod
     def linear_volume(t: np.ndarray) -> np.ndarray:
         return 1 - np.abs(2 * t / t[-1] - 1)
 
+    """
+    Common waveform methods.
+    """
     @staticmethod
     def sin(t: np.ndarray, freq: float, amp: float) -> np.ndarray:
         return amp * np.sin(2 * np.pi * freq * t)
 
+    """
+    Begin instance methods.
+    """
     def __init__(self, sample_rate: int,
                  relative_amp: float) -> None:
         self.sample_rate = sample_rate
@@ -28,15 +41,16 @@ class Audio:
                              dtype=np.float64)
         self.collected_amp = np.zeros_like(self.t)
 
-    def create_amp(self, amp_func: Callable[[np.ndarray, float, float],
-                                            np.ndarray],
-                   frequency: float,
-                   amplitude: float) -> None:
+    def create_wave(self, wave_func: Callable[[np.ndarray, float, float],
+                                              np.ndarray],
+                    frequency: float,
+                    amplitude: float) -> None:
         if self.collected_amp is None:
             raise NotImplementedError("Construct time first with"
-                                      "`construct_time` before creating amp.")
+                                      "`construct_time` before creating"
+                                      "waves.")
 
-        self.collected_amp += amp_func(self.t, frequency, amplitude)
+        self.collected_amp += wave_func(self.t, frequency, amplitude)
 
     def play_sound(self, vol_func: Callable[[np.ndarray], np.ndarray]) -> None:
         amp = (self.collected_amp * vol_func(self.t)
