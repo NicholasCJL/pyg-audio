@@ -69,3 +69,7 @@ The functions `wave_func` and `vol_func` are extensible as long as they follow t
 `wave_func`: Vectorized mapping from time to amplitude. Converts an array of time values `t` into a corresponding amplitude array. E.g. `lambda t, f, A: A * np.sin(2 * np.pi * f * t)` representing a sine wave.
 
 `vol_func`: Vectorized mapping from time to volume modulation (from 0 to 1). 1 corresponds to no change in volume, 0 corresponds to 0 volume. Converts an array of time values `t` into a corresponding modulation array that will be element-wise multiplied with the overall array containing the amplitudes.
+
+
+### Contact
+[contact@nicholascjl.dev](mailto:contact@nicholascjl.dev)
