@@ -1,7 +1,7 @@
 from setuptools import setup
 
 setup(name='pygaudio',
-      version='0.2.1',
+      version='0.2.2',
       description='Extensible template for basic audio creation and playback'
       ' using python with pygame.',
       url='https://github.com/NicholasCJL/pyg-audio',
