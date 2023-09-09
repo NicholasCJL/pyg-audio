@@ -100,8 +100,11 @@ class PygAudio:
         wave_time = self.t[start_offset:stop_offset+1]
         # segment of collected amplitude the wave lasts for
         amp_segment = self.collected_amp[start_offset:stop_offset+1]
-        amp_segment += (vol_func(wave_time)
-                        * wave_func(wave_time, frequency, amplitude, phase))
+        # modulation starts relative to t=offset
+        modulation = vol_func(wave_time - wave_time[0])
+        # wave starts relative to t=0
+        wave = wave_func(wave_time, frequency, amplitude, phase)
+        amp_segment += modulation * wave
 
     def play_sound(self) -> None:
         amp = (self.collected_amp
