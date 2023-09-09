@@ -3,14 +3,14 @@ Extensible template for basic audio creation and playback using python with `pyg
 
 Requires `pygame` and any version of python that supports type hints.
 
-In `audio.py`, the class `Audio` provides an easy way to create audio with different waveforms and modulation functions, and is extensible with any custom functions. Basic waveforms and modulation functions come with the class. The class also allows for playback using `pygame`.
+In `audio.py`, the class `PygAudio` provides an easy way to create audio with different waveforms and modulation functions, and is extensible with any custom functions. Basic waveforms and modulation functions come with the class. The class also allows for playback using `pygame`.
 
 ## Examples
 
 ### Minimal code to play a single 200 Hz sine wave at constant volume for 10 seconds:
 
 ```
-from pygaudio import Audio
+from pygaudio import PygAudio
 
 rel_amp = 0.4  # relative limit on amplitude
 sample_rate = 44100  # number of samples per second
@@ -18,18 +18,18 @@ seconds = 10  # playback length
 f = 200  # frequency of sine wave
 r_f = 1  # relative amplitude of sine wave
 
-audio = Audio(sample_rate=sample_rate, relative_amp=rel_amp)
+audio = PygAudio(sample_rate=sample_rate, relative_amp=rel_amp)
 audio.construct_time(seconds=seconds)
-audio.create_wave(wave_func=Audio.sin, frequency=f, amplitude=r_f)
+audio.create_wave(wave_func=PygAudio.sin, frequency=f, amplitude=r_f)
 
-audio.play_sound(vol_func=Audio.constant_volume)
+audio.play_sound(vol_func=PygAudio.constant_volume)
 ```
 
 
 ### Code to play a 300 Hz sine wave in addition to the 200 Hz wave at half its volume
 
 ```
-from pygaudio import Audio
+from pygaudio import PygAudio
 
 rel_amp = 0.4  # relative limit on amplitude
 sample_rate = 44100  # number of samples per second
@@ -37,18 +37,18 @@ seconds = 10  # playback length
 fs = [200, 300]  # frequencies of sine wave
 r_fs = [1, 0.5]  # relative amplitudes of sine waves
 
-audio = Audio(sample_rate=sample_rate, relative_amp=rel_amp)
+audio = PygAudio(sample_rate=sample_rate, relative_amp=rel_amp)
 audio.construct_time(seconds=seconds)
 for f, r_f in zip(fs, r_fs):
-    audio.create_wave(wave_func=Audio.sin, frequency=f, amplitude=r_f)
+    audio.create_wave(wave_func=PygAudio.sin, frequency=f, amplitude=r_f)
 
-audio.play_sound(vol_func=Audio.constant_volume)
+audio.play_sound(vol_func=PygAudio.constant_volume)
 ```
 
 ### Code to modulate the above waves with a linearly increasing then decreasing volume
 
 ```
-from pygaudio import Audio
+from pygaudio import PygAudio
 
 rel_amp = 0.4  # relative limit on amplitude
 sample_rate = 44100  # number of samples per second
@@ -56,12 +56,12 @@ seconds = 10  # playback length
 fs = [200, 300]  # frequencies of sine wave
 r_fs = [1, 0.5]  # relative amplitudes of sine waves
 
-audio = Audio(sample_rate=sample_rate, relative_amp=rel_amp)
+audio = PygAudio(sample_rate=sample_rate, relative_amp=rel_amp)
 audio.construct_time(seconds=seconds)
 for f, r_f in zip(fs, r_fs):
-    audio.create_wave(wave_func=Audio.sin, frequency=f, amplitude=r_f)
+    audio.create_wave(wave_func=PygAudio.sin, frequency=f, amplitude=r_f)
 
-audio.play_sound(vol_func=Audio.linear_volume)
+audio.play_sound(vol_func=PygAudio.linear_volume)
 ```
 
 
