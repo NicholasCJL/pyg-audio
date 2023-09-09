@@ -44,6 +44,39 @@ class PygAudio:
             phi = 0
         return amp * np.sin(2 * np.pi * freq * t + phi)
 
+    @staticmethod
+    def saw(t: np.ndarray,
+            freq: float,
+            amp: float,
+            phi: Optional[float] = None) -> np.ndarray:
+        """
+        Standard sawtooth waveform.
+        :param t: Array of timesteps.
+        :param freq: Frequency of wave.
+        :param phi: Phase of wave in radians. Defaults to 0.
+        """
+        if phi is None:
+            phi = 0
+        period = 1 / freq
+        # convert phase to seconds
+        phase = phi * period / (2 * np.pi)
+        return amp * (((t + phase) % period) / period - 0.5)
+
+    @staticmethod
+    def square(t: np.ndarray,
+               freq: float,
+               amp: float,
+               phi: Optional[float] = None) -> np.ndarray:
+        """
+        Standard square waveform.
+        :param t: Array of timesteps.
+        :param freq: Frequency of wave.
+        :param phi: Phase of wave in radians. Defaults to 0.
+        """
+        if phi is None:
+            phi = 0
+        return amp * np.sign(np.sin(2 * np.pi * freq * t + phi))
+
     """
     Begin instance methods.
     """
