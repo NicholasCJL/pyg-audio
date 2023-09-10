@@ -38,7 +38,7 @@ class PygAudio:
         Standard sine waveform.
         :param t: Array of timesteps.
         :param freq: Frequency of wave.
-        :param phi: Phase of wave in radians. Defaults to 0.
+        :param phi: (Optional) Phase of wave in radians. Defaults to 0.
         """
         if phi is None:
             phi = 0
@@ -53,7 +53,7 @@ class PygAudio:
         Standard sawtooth waveform.
         :param t: Array of timesteps.
         :param freq: Frequency of wave.
-        :param phi: Phase of wave in radians. Defaults to 0.
+        :param phi: (Optional) Phase of wave in radians. Defaults to 0.
         """
         if phi is None:
             phi = 0
@@ -71,7 +71,7 @@ class PygAudio:
         Standard square waveform.
         :param t: Array of timesteps.
         :param freq: Frequency of wave.
-        :param phi: Phase of wave in radians. Defaults to 0.
+        :param phi: (Optional) Phase of wave in radians. Defaults to 0.
         """
         if phi is None:
             phi = 0
@@ -86,7 +86,7 @@ class PygAudio:
         Standard triangle waveform.
         :param t: Array of timesteps.
         :param freq: Frequency of wave.
-        :param phi: Phase of wave in radians. Defaults to 0.
+        :param phi: (Optional) Phase of wave in radians. Defaults to 0.
         """
         if phi is None:
             phi = 0
@@ -106,6 +106,11 @@ class PygAudio:
         pygame.mixer.init(frequency=sample_rate, buffer=4096)
 
     def construct_time(self, seconds: float) -> float:
+        """
+        Create time array based on total number of seconds.
+        :param seconds: Total number of seconds to play audio for.
+        :return: Length of each timestep (between samples).
+        """
         self.t = np.linspace(0, seconds, self.sample_rate * seconds,
                              dtype=np.float64)
         self.collected_amp = np.zeros_like(self.t)
@@ -117,12 +122,26 @@ class PygAudio:
                                                float,
                                                Optional[float]],
                                               np.ndarray],
+                    vol_func: Callable[[np.ndarray], np.ndarray],
                     frequency: float,
                     amplitude: float,
-                    vol_func: Callable[[np.ndarray], np.ndarray],
+                    phase: Optional[float] = None,
                     start_offset: Optional[float] = None,
-                    stop_offset: Optional[float] = None,
-                    phase: Optional[float] = 0) -> None:
+                    stop_offset: Optional[float] = None) -> None:
+        """
+        Create audio based on a defined wavefunction and volume function.
+        :param wave_func: Function that takes in time array and returns array
+            of amplitudes.
+        :param vol_func: Function that takes in time array and returns array
+            of modulation coefficients.
+        :param frequency: Frequency of wave.
+        :param amplitude: Amplitude of wave.
+        :param phase: (Optional) Phase of wave. 0 if None.
+        :param start_offset: (Optional) Starting index of time array to play
+            wave at. Starts at 0 if None.
+        :param stop_offset: (Optional) Stopping index of time array to play
+            wave at. Stops at last index if None.
+        """
         if self.collected_amp is None:
             raise UnboundLocalError("Construct time first with"
                                     "`construct_time` before creating"
@@ -146,6 +165,9 @@ class PygAudio:
                       " timestep.")
                 stop_offset = (len(self.t) - 1)
 
+        if phase is None:
+            phase = 0
+
         # segment of time array the wave lasts for
         wave_time = self.t[start_offset:stop_offset+1]
         # segment of collected amplitude the wave lasts for
@@ -155,6 +177,56 @@ class PygAudio:
         # wave starts relative to t=0
         wave = wave_func(wave_time, frequency, amplitude, phase)
         amp_segment += modulation * wave
+
+    def insert_audio(self, audio: np.ndarray,
+                     start_offset: Optional[float] = None,
+                     stop_offset: Optional[float] = None,
+                     vol_func: Optional[Callable[[np.ndarray],
+                                                 np.ndarray]] = None) -> None:
+        """
+        Add raw audio in the form of a numpy array. If length of audio
+            provided does not match the offsets or exceeds the time array,
+            audio is repeated/truncated to match.
+        :param audio: Numpy array with raw amplitudes of wave.
+        :param start_offset: (Optional) Starting index of time array to play
+            wave at. Starts at 0 if None.
+        :param stop_offset: (Optional) Stopping index of time array to play
+            wave at. Stops at start_offset + len(audio) - 1 if None.
+        :param vol_func: (Optional) Function that takes in time array and
+            returns array of modulation coefficients. No modulation if None.
+        """
+        # offset checks
+        if start_offset is None:
+            start_offset = 0
+        if stop_offset is None:
+            stop_offset = start_offset + len(audio) - 1
+
+        # force within bounds
+        if start_offset < 0:
+            print(f"{start_offset=} set to invalid value, setting to 0.")
+            start_offset = 0
+        if stop_offset > (len(self.t) - 1):
+            print(f"{stop_offset=} set to invalid value, setting to final"
+                  " timestep.")
+            stop_offset = (len(self.t) - 1)
+
+        if stop_offset <= start_offset:
+            raise ValueError("Stop offset has to be greater than start"
+                             " offset.")
+
+        # force length
+        audio = np.resize(audio, stop_offset - start_offset + 1)
+
+        if vol_func is None:
+            vol_func = self.constant_volume
+
+        # segment of time array the wave lasts for
+        wave_time = self.t[start_offset:stop_offset+1]
+        # segment of collected amplitude the wave lasts for
+        amp_segment = self.collected_amp[start_offset:stop_offset+1]
+        # modulation starts relative to t=offset
+        modulation = vol_func(wave_time - wave_time[0])
+        amp_segment += modulation * audio
 
     def play_sound(self) -> None:
         amp = (self.collected_amp
