@@ -225,4 +225,4 @@ class PygAudio:
         Converts a timestamp to offset for methods that require offset.
         :param time: Time to convert to offset.
         """
-        return int(time / self.sample_rate)
+        return int(time * self.sample_rate)
