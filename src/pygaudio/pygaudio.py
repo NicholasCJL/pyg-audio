@@ -38,7 +38,7 @@ class PygAudio:
         :param seconds: Total number of seconds to play audio for.
         :return: Length of each timestep (between samples).
         """
-        self.t = np.linspace(0, seconds, self.sample_rate * seconds,
+        self.t = np.linspace(0, seconds, int(self.sample_rate * seconds),
                              dtype=np.float64)
 
         self.collected_amp = np.zeros((len(self.t), self.num_channels),
