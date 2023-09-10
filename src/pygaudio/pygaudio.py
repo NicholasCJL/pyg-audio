@@ -92,13 +92,24 @@ class PygAudio:
             phi = 0
 
         # trigonometric form is ~2x as fast as remainder form
-        return (2 * amp / np.pi) * np.arcsin(np.sin(2 * np.pi * freq * t + phi))
+        return ((2 * amp / np.pi)
+                * np.arcsin(np.sin(2 * np.pi * freq * t + phi)))
 
     """
     Begin instance methods.
     """
-    def __init__(self, sample_rate: int,
-                 relative_amp: float) -> None:
+    def __init__(self, sample_rate: Optional[int] = None,
+                 relative_amp: Optional[float] = None) -> None:
+        """
+        :param sample_rate: Sample rate of audio engine. Defaults to 44100.
+        :param relative_amp: Relative amplitude of final audio (0 to 1).
+            Defaults to 0.5.
+        """
+        if sample_rate is None:
+            sample_rate = 44100
+        if relative_amp is None:
+            relative_amp = 0.5
+
         self.sample_rate = sample_rate
         self.relative_amp = relative_amp
         self.t = None
