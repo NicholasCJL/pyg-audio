@@ -33,7 +33,7 @@ def linear_exp_envelope(t: np.ndarray,
     Quick ramp up from 0 then decay. f(t, scale) = t*exp(1-t/scale)/scale.
     Max amplitude of 1.
     :param t: Array of timesteps.
-    :param scale: "Sharpness" of "hump". Larger scale corresponds to faster
+    :param scale: "Smoothness" of "hump". Larger scale corresponds to slower
         ramp up and decay. Defaults to 1.
     """
     if scale is None:
