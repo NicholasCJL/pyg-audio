@@ -57,10 +57,10 @@ class PygAudio:
         """
         if phi is None:
             phi = 0
-        period = 1 / freq
-        # convert phase to seconds
-        phase = phi * period / (2 * np.pi)
-        return amp * (((t + phase) % period) / period - 0.5)
+
+        # trigonometric form is ~2x as fast as remainder form
+        return ((2 * amp / np.pi)
+                * np.arctan(np.tan(np.pi * freq * t + phi / 2)))
 
     @staticmethod
     def square(t: np.ndarray,
@@ -76,6 +76,23 @@ class PygAudio:
         if phi is None:
             phi = 0
         return amp * np.sign(np.sin(2 * np.pi * freq * t + phi))
+
+    @staticmethod
+    def triangle(t: np.ndarray,
+                 freq: float,
+                 amp: float,
+                 phi: Optional[float] = None) -> np.ndarray:
+        """
+        Standard triangle waveform.
+        :param t: Array of timesteps.
+        :param freq: Frequency of wave.
+        :param phi: Phase of wave in radians. Defaults to 0.
+        """
+        if phi is None:
+            phi = 0
+
+        # trigonometric form is ~2x as fast as remainder form
+        return (2 * amp / np.pi) * np.arcsin(np.sin(2 * np.pi * freq * t + phi))
 
     """
     Begin instance methods.
