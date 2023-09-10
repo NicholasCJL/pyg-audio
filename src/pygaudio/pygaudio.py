@@ -51,7 +51,8 @@ class PygAudio:
                                                float,
                                                Optional[float]],
                                               np.ndarray],
-                    vol_func: Callable[[np.ndarray], np.ndarray],
+                    vol_func: Callable[[np.ndarray, Optional[float]],
+                                       np.ndarray],
                     frequency: float,
                     amplitude: float,
                     phase: Optional[float] = None,
@@ -130,7 +131,7 @@ class PygAudio:
                      start_offset: Optional[float] = None,
                      stop_offset: Optional[float] = None,
                      channel: Optional[str] = None,
-                     vol_func: Optional[Callable[[np.ndarray],
+                     vol_func: Optional[Callable[[np.ndarray, Optional[float]],
                                                  np.ndarray]] = None) -> None:
         """
         Add raw audio in the form of a numpy array. If length of audio
