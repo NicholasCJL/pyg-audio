@@ -106,7 +106,7 @@ class PygAudio:
         if channel not in ("left", "right", "both"):
             raise ValueError(f"{channel=} has to be 'left' or 'right' or"
                              " 'both'")
-        if channel == "both" and self.num_channels == 1:
+        if channel != "left" and self.num_channels == 1:
             channel = "left"
 
         # segment of time array the wave lasts for
@@ -171,7 +171,7 @@ class PygAudio:
         if channel not in ("left", "right", "both"):
             raise ValueError(f"{channel=} has to be 'left' or 'right' or"
                              " 'both'")
-        if channel == "both" and self.num_channels == 1:
+        if channel != "left" and self.num_channels == 1:
             channel = "left"
 
         # force length
