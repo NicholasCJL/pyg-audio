@@ -100,11 +100,14 @@ class PygAudio:
         if phase is None:
             phase = 0
 
+        # attempt to convert channel value to something logical
         if channel is None:
             channel = "both" if self.num_channels == 2 else "left"
         if channel not in ("left", "right", "both"):
             raise ValueError(f"{channel=} has to be 'left' or 'right' or"
                              " 'both'")
+        if channel == "both" and self.num_channels == 1:
+            channel = "left"
 
         # segment of time array the wave lasts for
         wave_time = self.t[start_offset:stop_offset+1]
@@ -162,11 +165,14 @@ class PygAudio:
             raise ValueError("Stop offset has to be greater than start"
                              " offset.")
 
+        # attempt to convert channel value to something logical
         if channel is None:
             channel = "both" if self.num_channels == 2 else "left"
         if channel not in ("left", "right", "both"):
             raise ValueError(f"{channel=} has to be 'left' or 'right' or"
                              " 'both'")
+        if channel == "both" and self.num_channels == 1:
+            channel = "left"
 
         # force length
         audio = np.resize(audio, stop_offset - start_offset + 1)
