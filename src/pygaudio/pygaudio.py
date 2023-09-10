@@ -56,6 +56,7 @@ class PygAudio:
                     frequency: float,
                     amplitude: float,
                     phase: Optional[float] = None,
+                    scale: Optional[float] = None,
                     start_offset: Optional[float] = None,
                     stop_offset: Optional[float] = None,
                     channel: Optional[str] = None) -> None:
@@ -68,6 +69,7 @@ class PygAudio:
         :param frequency: Frequency of wave.
         :param amplitude: Amplitude of wave.
         :param phase: (Optional) Phase of wave. 0 if None.
+        :param scale: (Optional) Scale for vol_func. 1 if None.
         :param start_offset: (Optional) Starting index of time array to play
             wave at. Starts at 0 if None.
         :param stop_offset: (Optional) Stopping index of time array to play
@@ -100,6 +102,8 @@ class PygAudio:
 
         if phase is None:
             phase = 0
+        if scale is None:
+            scale = 1
 
         # attempt to convert channel value to something logical
         if channel is None:
@@ -113,7 +117,7 @@ class PygAudio:
         # segment of time array the wave lasts for
         wave_time = self.t[start_offset:stop_offset+1]
         # modulation starts relative to t=offset
-        modulation = vol_func(wave_time - wave_time[0])
+        modulation = vol_func(wave_time - wave_time[0], scale)
         # wave starts relative to t=0
         wave = wave_func(wave_time, frequency, amplitude, phase)
         # modulated wave
@@ -128,6 +132,7 @@ class PygAudio:
             amp_segment += mod_audio
 
     def insert_audio(self, audio: np.ndarray,
+                     scale: Optional[float] = None,
                      start_offset: Optional[float] = None,
                      stop_offset: Optional[float] = None,
                      channel: Optional[str] = None,
@@ -138,6 +143,7 @@ class PygAudio:
             provided does not match the offsets or exceeds the time array,
             audio is repeated/truncated to match.
         :param audio: Numpy array with raw amplitudes of wave.
+        :param scale: (Optional) Scale for vol_func. 1 if None.
         :param start_offset: (Optional) Starting index of time array to play
             wave at. Starts at 0 if None.
         :param stop_offset: (Optional) Stopping index of time array to play
@@ -166,6 +172,9 @@ class PygAudio:
             raise ValueError("Stop offset has to be greater than start"
                              " offset.")
 
+        if scale is None:
+            scale = 1
+
         # attempt to convert channel value to something logical
         if channel is None:
             channel = "both" if self.num_channels == 2 else "left"
@@ -184,7 +193,7 @@ class PygAudio:
         # segment of time array the wave lasts for
         wave_time = self.t[start_offset:stop_offset+1]
         # modulation starts relative to t=offset
-        modulation = vol_func(wave_time - wave_time[0])
+        modulation = vol_func(wave_time - wave_time[0], scale)
         # modulated audio
         mod_audio = modulation * audio
 
