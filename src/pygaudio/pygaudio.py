@@ -219,3 +219,10 @@ class PygAudio:
         sound.play()
         while pygame.mixer.get_busy():
             pygame.time.delay(100)
+
+    def time_to_offset(self, time: float) -> int:
+        """
+        Converts a timestamp to offset for methods that require offset.
+        :param time: Time to convert to offset.
+        """
+        return int(time / self.sample_rate)
